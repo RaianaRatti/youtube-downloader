@@ -1,0 +1,28 @@
+[project]
+name = "ytdl"
+version = "0.1.0"
+description = "Personal local CLI for downloading audio/video from YouTube"
+requires-python = ">=3.11"
+dependencies = [
+    "yt-dlp>=2024.8.6",
+    "typer>=0.12.0",
+]
+
+[project.scripts]
+ytdl = "ytdl.cli:app"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "ruff>=0.6.0",
+]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
