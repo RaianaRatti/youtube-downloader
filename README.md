@@ -26,7 +26,9 @@ pipx install .
 ```
 
 This makes `ytdl` available anywhere on your system without touching your
-global Python packages.
+global Python packages. If `pipx` warns that `~/.local/bin` isn't on your
+`PATH`, run `pipx ensurepath` and restart your shell (or open a new terminal
+tab) before `ytdl` will be found.
 
 ### Development install
 

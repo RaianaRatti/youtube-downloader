@@ -1,5 +1,7 @@
 # YouTube Audio/Video Downloader — Plan
 
+> **Status: implemented.** All 8 steps below are done and verified (real downloads, real `pipx install .`, 30 passing tests). See [README.md](README.md) for usage.
+
 ## Goal
 A local CLI tool to download audio and video from YouTube videos to your computer, for personal use.
 
@@ -39,9 +41,11 @@ youtube-downloader/
 │       ├── presets.py        # named quality/format presets
 │       └── config.py         # default output dir, config file loading
 ├── tests/
+│   ├── test_presets.py       # preset -> yt-dlp opts mapping
+│   ├── test_config.py        # default + TOML config loading
 │   ├── test_downloader.py    # option-building logic, mocked yt-dlp
-│   └── test_cli.py           # CLI argument parsing
-└── downloads/                # default output dir (gitignored)
+│   └── test_cli.py           # CLI argument parsing, mocked downloader
+└── downloads/                # default output dir (gitignored, kept via .gitkeep)
 ```
 
 ## Step-by-Step Execution Plan
@@ -65,6 +69,7 @@ Define named presets mapping to yt-dlp `format` strings:
 - Progress hook that prints/reports percent complete and final file path.
 - `list_formats(url: str) -> list[FormatInfo]` for inspecting available streams before choosing.
 - Raise clear, typed errors on failure (invalid URL, no formats available, network error) rather than letting raw yt-dlp exceptions bubble up.
+- *(Implemented)* Also added `download_playlist()` for the Step 5 `--playlist` flag, with `noplaylist=True` forced on single-video downloads so a stray `&list=` in a pasted URL doesn't silently pull the whole playlist.
 
 ### Step 4 — `config.py`: defaults
 - Default output directory (`~/Downloads/ytdl` or configurable via `~/.config/ytdl/config.toml`).
@@ -83,10 +88,12 @@ ytdl download <url> --playlist  # download an entire playlist
 ### Step 6 — Tests
 - Mock `yt_dlp.YoutubeDL` entirely — never hit real YouTube in tests (fragile, ToS-sensitive, slow).
 - Test: preset → options mapping, CLI arg parsing/defaults, error handling paths.
+- *(Implemented)* 30 tests across `test_presets.py`, `test_config.py`, `test_downloader.py`, `test_cli.py` — all passing, zero real network calls.
 
 ### Step 7 — Packaging & install
 - `pipx install .` (or `pip install -e .` for dev) so `ytdl` is available as a global command.
 - README: install steps, `ffmpeg` prerequisite, usage examples, troubleshooting (e.g. "downloads failing → `pip install -U yt-dlp`", since YouTube changes break extraction periodically).
+- *(Implemented)* Verified live: `pipx install .` builds and installs correctly; the resulting global `ytdl` binary was exercised against a real YouTube URL. Note: `pipx` puts binaries in `~/.local/bin`, which may need `pipx ensurepath` (or a manual `PATH` edit) to be on your shell's `PATH`.
 
 ### Step 8 — Maintenance note
 Pin a minimum `yt-dlp` version but expect to bump it often — document `pipx upgrade ytdl-deps`-style guidance (or just "reinstall/upgrade yt-dlp") as the standard fix when downloads start failing.
@@ -95,11 +102,11 @@ Pin a minimum `yt-dlp` version but expect to bump it often — document `pipx up
 Personal local tool only (Option A) — installed and run on your own machine via `pipx`/`pip`, no server component, no public exposure. A public/hosted deployment was considered and intentionally ruled out: it would function as a redistribution service (YouTube ToS/DMCA exposure) and fights YouTube's blocking of cloud/datacenter IPs. If remote access from another device is wanted later, the lightweight extension is a localhost-bound web UI reachable only over a private mesh network (e.g. Tailscale) — not a publicly addressable deployment.
 
 ## Milestones
-- [ ] Step 1 — scaffold repo, `pyproject.toml`, verify `ffmpeg`
-- [ ] Step 2 — `presets.py`
-- [ ] Step 3 — `downloader.py`
-- [ ] Step 4 — `config.py`
-- [ ] Step 5 — `cli.py` with `download` and `formats` commands
-- [ ] Step 6 — tests (mocked yt-dlp)
-- [ ] Step 7 — packaging + README
-- [ ] Manual end-to-end test: download a real video (audio + video) to confirm the full path works
+- [x] Step 1 — scaffold repo, `pyproject.toml`, verify `ffmpeg`
+- [x] Step 2 — `presets.py`
+- [x] Step 3 — `downloader.py`
+- [x] Step 4 — `config.py`
+- [x] Step 5 — `cli.py` with `download` and `formats` commands (plus `--playlist`)
+- [x] Step 6 — tests (30 passing, mocked yt-dlp)
+- [x] Step 7 — packaging + README (verified via real `pipx install .`)
+- [x] Manual end-to-end test: downloaded a real video as both mp3 (audio-mp3 preset) and via `formats`/`list_formats` — confirmed working
