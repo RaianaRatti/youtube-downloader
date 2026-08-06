@@ -1,6 +1,6 @@
 import pytest
 
-from ytdl.presets import DEFAULT_PRESET, PRESETS, get_preset, list_presets
+from yoink.presets import DEFAULT_PRESET, PRESETS, get_preset, list_presets
 
 
 def test_default_preset_exists():

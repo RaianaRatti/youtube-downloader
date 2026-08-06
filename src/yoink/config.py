@@ -6,9 +6,9 @@ import tomllib
 from dataclasses import dataclass, replace
 from pathlib import Path
 
-DEFAULT_OUTPUT_DIR = Path.home() / "Downloads" / "ytdl"
+DEFAULT_OUTPUT_DIR = Path.home() / "Downloads" / "yoink"
 DEFAULT_PRESET = "video-best"
-CONFIG_DIR = Path.home() / ".config" / "ytdl"
+CONFIG_DIR = Path.home() / ".config" / "yoink"
 CONFIG_FILE = CONFIG_DIR / "config.toml"
 
 

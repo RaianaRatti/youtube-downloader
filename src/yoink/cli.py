@@ -6,10 +6,10 @@ from pathlib import Path
 
 import typer
 
-from ytdl.config import load_config
-from ytdl.downloader import DownloadError, download_playlist, list_formats
-from ytdl.downloader import download as run_download
-from ytdl.presets import PRESETS, get_preset
+from yoink.config import load_config
+from yoink.downloader import DownloadError, download_playlist, list_formats
+from yoink.downloader import download as run_download
+from yoink.presets import PRESETS, get_preset
 
 app = typer.Typer(help="Download audio/video from YouTube for personal use.", no_args_is_help=True)
 

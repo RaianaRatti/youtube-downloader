@@ -34,7 +34,7 @@ youtube-downloader/
 ├── pyproject.toml
 ├── .gitignore
 ├── src/
-│   └── ytdl/
+│   └── yoink/
 │       ├── __init__.py
 │       ├── cli.py            # Typer app: download, formats commands
 │       ├── downloader.py     # wraps yt_dlp.YoutubeDL, builds options, runs download
@@ -53,7 +53,7 @@ youtube-downloader/
 ### Step 1 — Scaffold the project
 - `pyproject.toml` with project metadata, dependencies (`yt-dlp`, `typer`), dev deps (`pytest`, `ruff`).
 - `.gitignore` (Python + `downloads/`).
-- Empty package layout under `src/ytdl/`.
+- Empty package layout under `src/yoink/`.
 - Verify `ffmpeg` is installed on the dev machine.
 
 ### Step 2 — `presets.py`: format presets
@@ -72,17 +72,17 @@ Define named presets mapping to yt-dlp `format` strings:
 - *(Implemented)* Also added `download_playlist()` for the Step 5 `--playlist` flag, with `noplaylist=True` forced on single-video downloads so a stray `&list=` in a pasted URL doesn't silently pull the whole playlist.
 
 ### Step 4 — `config.py`: defaults
-- Default output directory (`~/Downloads/ytdl` or configurable via `~/.config/ytdl/config.toml`).
+- Default output directory (`~/Downloads/yoink` or configurable via `~/.config/yoink/config.toml`).
 - Optional: path to a cookies file/browser for age-gated or rate-limited videos (`--cookies-from-browser`).
 
 ### Step 5 — `cli.py`: CLI commands
 Using `typer`:
 ```
-ytdl download <url> [--preset audio-mp3] [--output-dir PATH]
-ytdl formats <url>              # list available formats/qualities for a URL
-ytdl download <url> --playlist  # download an entire playlist
+yoink download <url> [--preset audio-mp3] [--output-dir PATH]
+yoink formats <url>              # list available formats/qualities for a URL
+yoink download <url> --playlist  # download an entire playlist
 ```
-- Sensible defaults so `ytdl download <url>` alone "just works" (best video+audio to default dir).
+- Sensible defaults so `yoink download <url>` alone "just works" (best video+audio to default dir).
 - Clear progress output (percent, speed, ETA) and a final printed path to the saved file.
 
 ### Step 6 — Tests
@@ -91,12 +91,12 @@ ytdl download <url> --playlist  # download an entire playlist
 - *(Implemented)* 30 tests across `test_presets.py`, `test_config.py`, `test_downloader.py`, `test_cli.py` — all passing, zero real network calls.
 
 ### Step 7 — Packaging & install
-- `pipx install .` (or `pip install -e .` for dev) so `ytdl` is available as a global command.
+- `pipx install .` (or `pip install -e .` for dev) so `yoink` is available as a global command.
 - README: install steps, `ffmpeg` prerequisite, usage examples, troubleshooting (e.g. "downloads failing → `pip install -U yt-dlp`", since YouTube changes break extraction periodically).
-- *(Implemented)* Verified live: `pipx install .` builds and installs correctly; the resulting global `ytdl` binary was exercised against a real YouTube URL. Note: `pipx` puts binaries in `~/.local/bin`, which may need `pipx ensurepath` (or a manual `PATH` edit) to be on your shell's `PATH`.
+- *(Implemented)* Verified live: `pipx install .` builds and installs correctly; the resulting global `yoink` binary was exercised against a real YouTube URL. Note: `pipx` puts binaries in `~/.local/bin`, which may need `pipx ensurepath` (or a manual `PATH` edit) to be on your shell's `PATH`.
 
 ### Step 8 — Maintenance note
-Pin a minimum `yt-dlp` version but expect to bump it often — document `pipx upgrade ytdl-deps`-style guidance (or just "reinstall/upgrade yt-dlp") as the standard fix when downloads start failing.
+Pin a minimum `yt-dlp` version but expect to bump it often — document `pipx upgrade yoink-deps`-style guidance (or just "reinstall/upgrade yt-dlp") as the standard fix when downloads start failing.
 
 ## Deployment
 Personal local tool only (Option A) — installed and run on your own machine via `pipx`/`pip`, no server component, no public exposure. A public/hosted deployment was considered and intentionally ruled out: it would function as a redistribution service (YouTube ToS/DMCA exposure) and fights YouTube's blocking of cloud/datacenter IPs. If remote access from another device is wanted later, the lightweight extension is a localhost-bound web UI reachable only over a private mesh network (e.g. Tailscale) — not a publicly addressable deployment.

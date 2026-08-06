@@ -8,7 +8,7 @@ from pathlib import Path
 
 import yt_dlp
 
-from ytdl.presets import get_preset
+from yoink.presets import get_preset
 
 DEFAULT_FILENAME_TEMPLATE = "%(title)s [%(id)s].%(ext)s"
 

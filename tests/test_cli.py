@@ -3,9 +3,9 @@ from unittest.mock import patch
 
 from typer.testing import CliRunner
 
-from ytdl.cli import app
-from ytdl.config import Config
-from ytdl.downloader import DownloadError, FormatInfo
+from yoink.cli import app
+from yoink.config import Config
+from yoink.downloader import DownloadError, FormatInfo
 
 runner = CliRunner()
 
@@ -13,10 +13,10 @@ runner = CliRunner()
 def test_download_command_uses_config_defaults(tmp_path):
     with (
         patch(
-            "ytdl.cli.load_config",
+            "yoink.cli.load_config",
             return_value=Config(output_dir=tmp_path, default_preset="audio-mp3"),
         ),
-        patch("ytdl.cli.run_download", return_value=tmp_path / "out.mp3") as mock_download,
+        patch("yoink.cli.run_download", return_value=tmp_path / "out.mp3") as mock_download,
     ):
         result = runner.invoke(app, ["download", "https://youtu.be/x"])
 
@@ -28,10 +28,10 @@ def test_download_command_uses_config_defaults(tmp_path):
 def test_download_command_cli_flags_override_config(tmp_path):
     with (
         patch(
-            "ytdl.cli.load_config",
+            "yoink.cli.load_config",
             return_value=Config(output_dir=Path("/default"), default_preset="video-best"),
         ),
-        patch("ytdl.cli.run_download", return_value=tmp_path / "out.mp4") as mock_download,
+        patch("yoink.cli.run_download", return_value=tmp_path / "out.mp4") as mock_download,
     ):
         result = runner.invoke(
             app,
@@ -45,11 +45,11 @@ def test_download_command_cli_flags_override_config(tmp_path):
 def test_download_command_playlist_flag_calls_download_playlist(tmp_path):
     with (
         patch(
-            "ytdl.cli.load_config",
+            "yoink.cli.load_config",
             return_value=Config(output_dir=tmp_path, default_preset="video-best"),
         ),
         patch(
-            "ytdl.cli.download_playlist",
+            "yoink.cli.download_playlist",
             return_value=[tmp_path / "1.mp4", tmp_path / "2.mp4"],
         ) as mock_pl,
     ):
@@ -61,7 +61,7 @@ def test_download_command_playlist_flag_calls_download_playlist(tmp_path):
 
 
 def test_download_command_unknown_preset_exits_nonzero():
-    with patch("ytdl.cli.load_config", return_value=Config()):
+    with patch("yoink.cli.load_config", return_value=Config()):
         result = runner.invoke(app, ["download", "https://youtu.be/x", "--preset", "bogus"])
 
     assert result.exit_code == 1
@@ -70,8 +70,8 @@ def test_download_command_unknown_preset_exits_nonzero():
 
 def test_download_command_reports_download_error(tmp_path):
     with (
-        patch("ytdl.cli.load_config", return_value=Config(output_dir=tmp_path)),
-        patch("ytdl.cli.run_download", side_effect=DownloadError("boom")),
+        patch("yoink.cli.load_config", return_value=Config(output_dir=tmp_path)),
+        patch("yoink.cli.run_download", side_effect=DownloadError("boom")),
     ):
         result = runner.invoke(app, ["download", "https://youtu.be/x"])
 
@@ -92,7 +92,7 @@ def test_formats_command_lists_formats():
             note="1080p",
         )
     ]
-    with patch("ytdl.cli.list_formats", return_value=fake_formats):
+    with patch("yoink.cli.list_formats", return_value=fake_formats):
         result = runner.invoke(app, ["formats", "https://youtu.be/x"])
 
     assert result.exit_code == 0
@@ -101,7 +101,7 @@ def test_formats_command_lists_formats():
 
 
 def test_formats_command_reports_error():
-    with patch("ytdl.cli.list_formats", side_effect=DownloadError("no such video")):
+    with patch("yoink.cli.list_formats", side_effect=DownloadError("no such video")):
         result = runner.invoke(app, ["formats", "https://youtu.be/x"])
 
     assert result.exit_code == 1

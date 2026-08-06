@@ -3,7 +3,7 @@ from unittest.mock import patch
 import pytest
 import yt_dlp
 
-from ytdl.downloader import (
+from yoink.downloader import (
     DownloadError,
     InvalidURLError,
     NetworkError,
@@ -20,7 +20,7 @@ def _mock_ydl(mock_cls):
 
 
 def test_download_returns_path_from_requested_downloads(tmp_path):
-    with patch("ytdl.downloader.yt_dlp.YoutubeDL") as mock_cls:
+    with patch("yoink.downloader.yt_dlp.YoutubeDL") as mock_cls:
         mock_ydl = _mock_ydl(mock_cls)
         mock_ydl.extract_info.return_value = {
             "id": "abc123",
@@ -40,7 +40,7 @@ def test_download_returns_path_from_requested_downloads(tmp_path):
 
 
 def test_download_falls_back_to_prepare_filename(tmp_path):
-    with patch("ytdl.downloader.yt_dlp.YoutubeDL") as mock_cls:
+    with patch("yoink.downloader.yt_dlp.YoutubeDL") as mock_cls:
         mock_ydl = _mock_ydl(mock_cls)
         mock_ydl.extract_info.return_value = {"id": "abc123", "ext": "mp3"}
         mock_ydl.prepare_filename.return_value = str(tmp_path / "audio.mp3")
@@ -53,7 +53,7 @@ def test_download_falls_back_to_prepare_filename(tmp_path):
 
 
 def test_download_raises_if_info_is_none(tmp_path):
-    with patch("ytdl.downloader.yt_dlp.YoutubeDL") as mock_cls:
+    with patch("yoink.downloader.yt_dlp.YoutubeDL") as mock_cls:
         mock_ydl = _mock_ydl(mock_cls)
         mock_ydl.extract_info.return_value = None
 
@@ -68,7 +68,7 @@ def test_download_unknown_preset_raises_before_touching_yt_dlp(tmp_path):
 
 def test_download_creates_output_dir(tmp_path):
     out_dir = tmp_path / "nested" / "deep"
-    with patch("ytdl.downloader.yt_dlp.YoutubeDL") as mock_cls:
+    with patch("yoink.downloader.yt_dlp.YoutubeDL") as mock_cls:
         mock_ydl = _mock_ydl(mock_cls)
         mock_ydl.extract_info.return_value = {
             "id": "x",
@@ -86,7 +86,7 @@ def test_download_progress_hook_reports_percent_and_finish(tmp_path):
     def cb(status, percent, filename):
         events.append((status, percent, filename))
 
-    with patch("ytdl.downloader.yt_dlp.YoutubeDL") as mock_cls:
+    with patch("yoink.downloader.yt_dlp.YoutubeDL") as mock_cls:
         mock_ydl = _mock_ydl(mock_cls)
         mock_ydl.extract_info.return_value = {
             "id": "x",
@@ -121,7 +121,7 @@ def test_download_progress_hook_reports_percent_and_finish(tmp_path):
     ],
 )
 def test_download_wraps_yt_dlp_errors(tmp_path, message, expected_exc):
-    with patch("ytdl.downloader.yt_dlp.YoutubeDL") as mock_cls:
+    with patch("yoink.downloader.yt_dlp.YoutubeDL") as mock_cls:
         mock_ydl = _mock_ydl(mock_cls)
         mock_ydl.extract_info.side_effect = yt_dlp.utils.DownloadError(message)
 
@@ -130,7 +130,7 @@ def test_download_wraps_yt_dlp_errors(tmp_path, message, expected_exc):
 
 
 def test_download_playlist_returns_all_entry_paths_and_skips_failures(tmp_path):
-    with patch("ytdl.downloader.yt_dlp.YoutubeDL") as mock_cls:
+    with patch("yoink.downloader.yt_dlp.YoutubeDL") as mock_cls:
         mock_ydl = _mock_ydl(mock_cls)
         mock_ydl.extract_info.return_value = {
             "entries": [
@@ -149,7 +149,7 @@ def test_download_playlist_returns_all_entry_paths_and_skips_failures(tmp_path):
 
 
 def test_list_formats_returns_format_info():
-    with patch("ytdl.downloader.yt_dlp.YoutubeDL") as mock_cls:
+    with patch("yoink.downloader.yt_dlp.YoutubeDL") as mock_cls:
         mock_ydl = _mock_ydl(mock_cls)
         mock_ydl.extract_info.return_value = {
             "formats": [
@@ -170,7 +170,7 @@ def test_list_formats_returns_format_info():
 
 
 def test_list_formats_raises_if_no_formats_key():
-    with patch("ytdl.downloader.yt_dlp.YoutubeDL") as mock_cls:
+    with patch("yoink.downloader.yt_dlp.YoutubeDL") as mock_cls:
         mock_ydl = _mock_ydl(mock_cls)
         mock_ydl.extract_info.return_value = {}
 

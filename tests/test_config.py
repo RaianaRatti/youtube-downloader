@@ -1,7 +1,7 @@
 import textwrap
 from pathlib import Path
 
-from ytdl.config import DEFAULT_OUTPUT_DIR, DEFAULT_PRESET, Config, load_config
+from yoink.config import DEFAULT_OUTPUT_DIR, DEFAULT_PRESET, Config, load_config
 
 
 def test_load_config_missing_file_returns_defaults(tmp_path):
@@ -17,12 +17,12 @@ def test_load_config_overrides_only_present_keys(tmp_path):
     config_file = tmp_path / "config.toml"
     config_file.write_text(
         textwrap.dedent("""\
-            output_dir = "~/Movies/ytdl-test"
+            output_dir = "~/Movies/yoink-test"
             default_preset = "audio-mp3"
         """)
     )
     config = load_config(config_file)
-    assert config.output_dir == Path.home() / "Movies" / "ytdl-test"
+    assert config.output_dir == Path.home() / "Movies" / "yoink-test"
     assert config.default_preset == "audio-mp3"
     assert config.cookies_from_browser is None
     assert config.cookies_file is None

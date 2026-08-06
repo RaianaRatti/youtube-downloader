@@ -1,4 +1,4 @@
-# ytdl
+# yoink
 
 A personal, local CLI for downloading audio and video from YouTube. Wraps
 [yt-dlp](https://github.com/yt-dlp/yt-dlp) with presets, a config file, and a
@@ -25,10 +25,10 @@ Recommended: install as an isolated global command with
 pipx install .
 ```
 
-This makes `ytdl` available anywhere on your system without touching your
+This makes `yoink` available anywhere on your system without touching your
 global Python packages. If `pipx` warns that `~/.local/bin` isn't on your
 `PATH`, run `pipx ensurepath` and restart your shell (or open a new terminal
-tab) before `ytdl` will be found.
+tab) before `yoink` will be found.
 
 ### Development install
 
@@ -41,20 +41,20 @@ pip install -e ".[dev]"
 ## Usage
 
 ```
-# Download the best available video+audio (default) to ~/Downloads/ytdl
-ytdl download https://www.youtube.com/watch?v=VIDEO_ID
+# Download the best available video+audio (default) to ~/Downloads/yoink
+yoink download https://www.youtube.com/watch?v=VIDEO_ID
 
 # Download audio only, transcoded to mp3
-ytdl download https://www.youtube.com/watch?v=VIDEO_ID --preset audio-mp3
+yoink download https://www.youtube.com/watch?v=VIDEO_ID --preset audio-mp3
 
 # Choose a specific quality cap and output directory
-ytdl download https://www.youtube.com/watch?v=VIDEO_ID --preset video-720p -o ~/Movies
+yoink download https://www.youtube.com/watch?v=VIDEO_ID --preset video-720p -o ~/Movies
 
 # Download an entire playlist
-ytdl download https://www.youtube.com/playlist?list=PLAYLIST_ID --playlist
+yoink download https://www.youtube.com/playlist?list=PLAYLIST_ID --playlist
 
 # List available formats/qualities for a video without downloading
-ytdl formats https://www.youtube.com/watch?v=VIDEO_ID
+yoink formats https://www.youtube.com/watch?v=VIDEO_ID
 ```
 
 Available presets: `video-best` (default), `video-1080p`, `video-720p`,
@@ -62,10 +62,10 @@ Available presets: `video-best` (default), `video-1080p`, `video-720p`,
 
 ## Configuration
 
-Optional config file at `~/.config/ytdl/config.toml`:
+Optional config file at `~/.config/yoink/config.toml`:
 
 ```toml
-output_dir = "~/Movies/ytdl"
+output_dir = "~/Movies/yoink"
 default_preset = "audio-mp3"
 
 # Only needed for age-gated or rate-limited videos:
@@ -84,7 +84,7 @@ changes its site frequently, which regularly breaks extraction until yt-dlp
 is updated. Upgrade it:
 
 ```
-pipx inject ytdl --force yt-dlp   # if installed via pipx
+pipx inject yoink --force yt-dlp   # if installed via pipx
 # or, in a dev install:
 pip install -U yt-dlp
 ```
