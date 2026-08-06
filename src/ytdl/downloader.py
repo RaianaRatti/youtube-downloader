@@ -82,6 +82,7 @@ def _build_ydl_opts(
     preset_name: str,
     filename_template: str,
     progress_callback: ProgressCallback | None,
+    noplaylist: bool = True,
 ) -> dict:
     preset = get_preset(preset_name)
     opts = preset.to_ydl_opts()
@@ -89,6 +90,7 @@ def _build_ydl_opts(
     opts["quiet"] = True
     opts["no_warnings"] = True
     opts["logger"] = _SilentLogger()
+    opts["noplaylist"] = noplaylist
 
     if progress_callback is not None:
 
@@ -143,6 +145,49 @@ def download(
             if requested:
                 return Path(requested[0]["filepath"])
             return Path(ydl.prepare_filename(info))
+    except yt_dlp.utils.DownloadError as exc:
+        raise _wrap_error(exc, url) from exc
+
+
+def download_playlist(
+    url: str,
+    output_dir: Path,
+    preset: str = "video-best",
+    filename_template: str = DEFAULT_FILENAME_TEMPLATE,
+    progress_callback: ProgressCallback | None = _default_progress_callback,
+) -> list[Path]:
+    """Download every video in a playlist per the given preset.
+
+    Returns the paths to the saved files. Entries that individually fail are
+    skipped rather than aborting the rest of the playlist.
+    """
+    output_dir.mkdir(parents=True, exist_ok=True)
+    opts = _build_ydl_opts(
+        output_dir, preset, filename_template, progress_callback, noplaylist=False
+    )
+    opts["ignoreerrors"] = True
+
+    try:
+        with yt_dlp.YoutubeDL(opts) as ydl:
+            info = ydl.extract_info(url, download=True)
+            if info is None:
+                raise DownloadError(f"yt-dlp returned no info for '{url}'")
+
+            entries = info.get("entries")
+            if entries is None:
+                requested = info.get("requested_downloads")
+                if requested:
+                    return [Path(requested[0]["filepath"])]
+                return [Path(ydl.prepare_filename(info))]
+
+            paths = []
+            for entry in entries:
+                if entry is None:
+                    continue
+                requested = entry.get("requested_downloads")
+                if requested:
+                    paths.append(Path(requested[0]["filepath"]))
+            return paths
     except yt_dlp.utils.DownloadError as exc:
         raise _wrap_error(exc, url) from exc
 
